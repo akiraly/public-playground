@@ -1,5 +1,7 @@
 package org.example
 
+import org.slf4j.LoggerFactory
+
 class App {
   val greeting: String
     get() {
@@ -7,6 +9,7 @@ class App {
     }
 }
 
+private val logger = LoggerFactory.getLogger(App::class.java)
 fun main() {
-  println(App().greeting)
+  logger.info(App().greeting)
 }
