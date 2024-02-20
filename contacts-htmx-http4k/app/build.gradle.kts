@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
   implementation(libs.bundles.hoplite)
+  implementation(libs.kotlinx.html)
   implementation(libs.logback)
 
   testImplementation(libs.bundles.kotest)
