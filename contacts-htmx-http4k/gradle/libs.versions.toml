@@ -3,18 +3,23 @@
 
 [versions]
 guava = "33.0.0-jre"
+hoplite = "2.7.5"
 http4k = "5.13.7.0"
 kotest = "5.8.0"
 logback = "1.5.0"
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
+hoplite-core = { module = "com.sksamuel.hoplite:hoplite-core", version.ref = "hoplite" }
+hoplite-yaml = { module = "com.sksamuel.hoplite:hoplite-yaml", version.ref = "hoplite" }
 kotest-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
 [bundles]
+hoplite = ["hoplite-core", "hoplite-yaml"]
 kotest = ["kotest-junit5", "kotest-assertions"]
 
 [plugins]
+detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.3" }
 jvm = { id = "org.jetbrains.kotlin.jvm", version = "1.9.22" }

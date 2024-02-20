@@ -1,11 +1,12 @@
 plugins {
   alias(libs.plugins.jvm)
+  alias(libs.plugins.detekt)
 
   application
 }
 
 dependencies {
-  implementation(libs.guava)
+  implementation(libs.bundles.hoplite)
   implementation(libs.logback)
 
   testImplementation(libs.bundles.kotest)
