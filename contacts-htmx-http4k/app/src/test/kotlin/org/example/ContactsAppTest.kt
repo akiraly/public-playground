@@ -3,9 +3,9 @@ package org.example
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldNotBe
 
-class AppTest : FunSpec({
+class ContactsAppTest : FunSpec({
   test("app should have a greeting") {
-    val classUnderTest = App()
+    val classUnderTest = ContactsApp()
     classUnderTest.greeting shouldNotBe null
   }
 })

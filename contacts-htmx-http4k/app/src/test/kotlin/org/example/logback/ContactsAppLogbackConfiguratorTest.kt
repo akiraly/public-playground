@@ -9,12 +9,12 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class AppLogbackConfiguratorTest : FunSpec({
+class ContactsAppLogbackConfiguratorTest : FunSpec({
 
   test("config test") {
     val loggerFactory = LoggerFactory.getILoggerFactory()
     loggerFactory.shouldBeInstanceOf<LoggerContext>()
-    loggerFactory.name shouldBe "contacts-htmx-http4k"
+    loggerFactory.name shouldBe "contactsapp"
 
     loggerFactory.getLogger(Logger.ROOT_LOGGER_NAME).iteratorForAppenders().asSequence().forExactly(1) {
       it.shouldBeInstanceOf<ConsoleAppender<*>>()

@@ -17,6 +17,10 @@ tasks.withType<Test>().configureEach {
 
 kotlin {
   jvmToolchain(21)
+
+  compilerOptions {
+    freeCompilerArgs.add("-Xcontext-receivers")
+  }
 }
 
 java {
@@ -26,5 +30,5 @@ java {
 }
 
 application {
-  mainClass = "org.example.AppKt"
+  mainClass = "org.example.ContactsAppKt"
 }
