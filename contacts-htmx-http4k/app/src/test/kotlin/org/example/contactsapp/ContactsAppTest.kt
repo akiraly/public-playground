@@ -1,4 +1,4 @@
-package org.example
+package org.example.contactsapp
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldNotBe

@@ -1,4 +1,4 @@
-package org.example.logback
+package org.example.contactsapp
 
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.core.ConsoleAppender
