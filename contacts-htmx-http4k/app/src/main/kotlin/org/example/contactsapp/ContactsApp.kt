@@ -10,6 +10,8 @@ import ch.qos.logback.core.ConsoleAppender
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder
 import ch.qos.logback.core.spi.ContextAwareBase
 import ch.qos.logback.core.util.StatusPrinter
+import com.sksamuel.hoplite.ConfigLoaderBuilder
+import com.sksamuel.hoplite.addResourceSource
 import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger(ContactsApp::class.java)
@@ -17,12 +19,41 @@ fun main() {
   logger.info(ContactsApp().greeting)
 }
 
+val contactsAppConfig = lazy { readContactsAppConfig() }
 
 class ContactsApp {
   val greeting: String
     get() {
       return "Hello World!"
     }
+}
+
+enum class ContactsAppEnv {
+  Dev, QA, Prod;
+
+  companion object {
+    const val APP_ENV = "APP_ENV"
+
+    private val values = ContactsAppEnv.entries.associateBy { it.name.lowercase() }
+    fun valueOfIgnoreCase(value: String): ContactsAppEnv = values.getValue(value.lowercase())
+
+    fun readFromEnv(env: Map<String, String> = System.getenv()): ContactsAppEnv =
+      valueOfIgnoreCase(env.getValue(APP_ENV))
+  }
+}
+
+data class ContactsAppConfig(val appEnv: ContactsAppEnv)
+
+fun readContactsAppConfig(
+  fileNameStub: String = "application",
+  env: ContactsAppEnv = ContactsAppEnv.readFromEnv()
+): ContactsAppConfig {
+  return ConfigLoaderBuilder.default()
+    .withResolveTypesCaseInsensitive()
+    .addResourceSource("/$fileNameStub-${env.name.lowercase()}.yml")
+    .addResourceSource("/$fileNameStub.yml")
+    .build()
+    .loadConfigOrThrow<ContactsAppConfig>()
 }
 
 class ContactsAppLogbackConfigurator : ContextAwareBase(), Configurator {

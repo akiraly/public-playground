@@ -3,7 +3,7 @@
 
 [versions]
 guava = "33.0.0-jre"
-hoplite = "2.7.5"
+hoplite = "2.8.0.RC3"
 http4k = "5.13.7.0"
 kotest = "5.8.0"
 kotlinx-html = "0.11.0"
