@@ -6,6 +6,7 @@ guava = "33.0.0-jre"
 hoplite = "2.8.0.RC3"
 http4k = "5.13.7.0"
 kotest = "5.8.0"
+kotlin = "1.9.22"
 kotlinx-html = "0.11.0"
 logback = "1.5.0"
 
@@ -13,8 +14,12 @@ logback = "1.5.0"
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 hoplite-core = { module = "com.sksamuel.hoplite:hoplite-core", version.ref = "hoplite" }
 hoplite-yaml = { module = "com.sksamuel.hoplite:hoplite-yaml", version.ref = "hoplite" }
-kotest-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+http4k-bom = { module = "org.http4k:http4k-bom", version.ref = "http4k" }
+http4k-core = { module = "org.http4k:http4k-core" }
+kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
+kotest-bom = { module = "io.kotest:kotest-bom", version.ref = "kotest" }
+kotest-junit5 = { module = "io.kotest:kotest-runner-junit5" }
+kotest-assertions = { module = "io.kotest:kotest-assertions-core" }
 kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version.ref = "kotlinx-html" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
@@ -24,4 +29,4 @@ kotest = ["kotest-junit5", "kotest-assertions"]
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version = "1.23.3" }
-jvm = { id = "org.jetbrains.kotlin.jvm", version = "1.9.22" }
+jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
