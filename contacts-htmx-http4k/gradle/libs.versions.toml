@@ -2,13 +2,14 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-guava = "33.0.0-jre"
+guava = "33.1.0-jre"
 hoplite = "2.8.0.RC3"
-http4k = "5.13.7.0"
-kotest = "5.8.0"
-kotlin = "1.9.22"
+http4k = "5.14.1.0"
+kotest = "5.8.1"
+kotlin = "1.9.23"
 kotlinx-html = "0.11.0"
-logback = "1.5.0"
+logback = "1.5.3"
+swagger-ui = "5.11.10"
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
@@ -16,15 +17,21 @@ hoplite-core = { module = "com.sksamuel.hoplite:hoplite-core", version.ref = "ho
 hoplite-yaml = { module = "com.sksamuel.hoplite:hoplite-yaml", version.ref = "hoplite" }
 http4k-bom = { module = "org.http4k:http4k-bom", version.ref = "http4k" }
 http4k-core = { module = "org.http4k:http4k-core" }
+http4k-contract = { module = "org.http4k:http4k-contract" }
+http4k-client-okhttp = { module = "org.http4k:http4k-client-okhttp" }
+http4k-format-jackson = { module = "org.http4k:http4k-format-jackson" }
+http4k-server-jetty = { module = "org.http4k:http4k-server-jetty" }
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
 kotest-bom = { module = "io.kotest:kotest-bom", version.ref = "kotest" }
 kotest-junit5 = { module = "io.kotest:kotest-runner-junit5" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core" }
 kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version.ref = "kotlinx-html" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+swagger-ui = { module = "org.webjars:swagger-ui", version.ref = "swagger-ui" }
 
 [bundles]
 hoplite = ["hoplite-core", "hoplite-yaml"]
+http4k = ["http4k-core", "http4k-contract", "http4k-client-okhttp", "http4k-format-jackson", "http4k-server-jetty"]
 kotest = ["kotest-junit5", "kotest-assertions"]
 
 [plugins]
