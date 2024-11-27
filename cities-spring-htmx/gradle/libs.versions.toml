@@ -2,7 +2,9 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-spring-boot = "3.3.5"
+gradle = "8.11.1"
+
+spring-boot = "3.4.0"
 
 htmx = "2.0.3"
 

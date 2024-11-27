@@ -19,6 +19,7 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs.set(listOf("-Xjsr305=strict"))
         javaParameters = true
         allWarningsAsErrors = true
+        extraWarnings = true
     }
 }
 
