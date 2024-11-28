@@ -16,7 +16,15 @@ java {
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        freeCompilerArgs.set(listOf("-Xjsr305=strict"))
+        freeCompilerArgs.set(
+            listOf(
+                "-Xjsr305=strict",
+                "-Xjspecify-annotations=strict",
+                "-Xjvm-default=all",
+                "-Xconsistent-data-class-copy-visibility",
+                "-Xsuppress-warning=UNUSED_ANONYMOUS_PARAMETER" // should be fixed in 2.1.20
+            )
+        )
         javaParameters = true
         allWarningsAsErrors = true
         extraWarnings = true
