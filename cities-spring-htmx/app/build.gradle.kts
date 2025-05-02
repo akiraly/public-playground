@@ -20,12 +20,14 @@ tasks.withType<KotlinCompile> {
             listOf(
                 "-Xjsr305=strict",
                 "-Xjspecify-annotations=strict",
+                "-Xtype-enhancement-improvements-strict-mode",
                 "-Xjvm-default=all",
                 "-Xconsistent-data-class-copy-visibility",
                 "-Xsuppress-warning=UNUSED_ANONYMOUS_PARAMETER" // should be fixed in 2.1.20
             )
         )
         javaParameters = true
+        progressiveMode = true
         allWarningsAsErrors = true
         extraWarnings = true
     }
