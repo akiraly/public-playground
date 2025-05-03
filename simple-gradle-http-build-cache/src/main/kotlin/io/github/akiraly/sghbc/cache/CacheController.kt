@@ -1,5 +1,6 @@
 package io.github.akiraly.sghbc.cache
 
+import org.slf4j.LoggerFactory
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -25,6 +26,7 @@ class CacheController(
     private val storeInCache: StoreInCache,
     private val retrieveFromCache: RetrieveFromCache
 ) {
+    private val logger = LoggerFactory.getLogger(CacheController::class.java)
 
     /**
      * Retrieves a cache entry
@@ -44,9 +46,16 @@ class CacheController(
             ResponseEntity.ok()
                 .contentType(APPLICATION_OCTET_STREAM)
                 .body(bytes)
-        } catch (e: FileNotFoundException) {
+        } catch (_: FileNotFoundException) {
+            logger.debug("Cache entry not found for cacheId: {}, cacheKey: {}", cacheId, cacheKey)
             ResponseEntity.notFound().build()
         } catch (e: Exception) {
+            logger.error(
+                "Error retrieving cache entry for cacheId: {}, cacheKey: {}",
+                cacheId,
+                cacheKey,
+                e
+            )
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
         }
     }
@@ -88,11 +97,24 @@ class CacheController(
         } catch (e: IOException) {
             // Check if the exception is related to payload size
             if (e.message?.contains("too large", ignoreCase = true) == true) {
+                logger.warn("Payload too large for cacheId: {}, cacheKey: {}", cacheId, cacheKey, e)
                 ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).build()
             } else {
+                logger.error(
+                    "IO error storing cache entry for cacheId: {}, cacheKey: {}",
+                    cacheId,
+                    cacheKey,
+                    e
+                )
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
             }
         } catch (e: Exception) {
+            logger.error(
+                "Error storing cache entry for cacheId: {}, cacheKey: {}",
+                cacheId,
+                cacheKey,
+                e
+            )
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
         }
     }

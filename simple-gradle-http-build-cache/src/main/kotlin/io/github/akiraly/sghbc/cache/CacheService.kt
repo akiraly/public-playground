@@ -3,6 +3,7 @@ package io.github.akiraly.sghbc.cache
 import com.fasterxml.jackson.annotation.JsonValue
 import org.jmolecules.ddd.types.Identifier
 import org.jmolecules.ddd.types.ValueObject
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
@@ -55,6 +56,8 @@ fun interface RetrieveFromCache : (CacheId, CacheKey) -> InputStream {
 class StoreInCacheDir(
     private val cacheDirectory: CacheDirectory
 ) : StoreInCache {
+    private val logger = LoggerFactory.getLogger(StoreInCacheDir::class.java)
+
     override fun invoke(cacheId: CacheId, cacheKey: CacheKey, inputStream: InputStream): Boolean {
         var tempFile: Path? = null
         try {
@@ -106,8 +109,13 @@ class StoreInCacheDir(
 
             return true
         } catch (e: Exception) {
-            // Log the error in a real application
-            e.printStackTrace()
+            // Log the error
+            logger.error(
+                "Error storing cache entry for cacheId: {}, cacheKey: {}",
+                cacheId,
+                cacheKey,
+                e
+            )
             return false
         } finally {
             // Clean up temp file if it still exists (in case of errors)
@@ -118,7 +126,7 @@ class StoreInCacheDir(
                     }
                 } catch (e: Exception) {
                     // Log the error but don't propagate it
-                    e.printStackTrace()
+                    logger.error("Error cleaning up temporary file: {}", it, e)
                 }
             }
         }
@@ -142,18 +150,30 @@ class StoreInCacheDir(
 class RetrieveFromCacheDir(
     private val cacheDirectory: CacheDirectory
 ) : RetrieveFromCache {
+    private val logger = LoggerFactory.getLogger(RetrieveFromCacheDir::class.java)
+
     override fun invoke(cacheId: CacheId, cacheKey: CacheKey): InputStream {
         val cacheKeyDir = cacheDirectory.cacheDirectory
             .resolve(cacheId.id)
             .resolve(cacheKey.id)
 
         if (!Files.exists(cacheKeyDir)) {
+            logger.debug(
+                "Cache directory not found for cacheId: {}, cacheKey: {}",
+                cacheId,
+                cacheKey
+            )
             throw FileNotFoundException("Cache entry not found for cacheId: $cacheId, cacheKey: $cacheKey")
         }
 
         // Use the 'latest' symlink to get the most recent version
         val latestLink = cacheKeyDir.resolve("latest")
         if (!Files.exists(latestLink)) {
+            logger.debug(
+                "Latest symlink not found for cacheId: {}, cacheKey: {}",
+                cacheId,
+                cacheKey
+            )
             throw FileNotFoundException("Latest cache entry not found for cacheId: $cacheId, cacheKey: $cacheKey")
         }
 
@@ -162,6 +182,12 @@ class RetrieveFromCacheDir(
         val actualFile = cacheKeyDir.resolve(cacheFile)
 
         if (!Files.exists(actualFile)) {
+            logger.debug(
+                "Cache file not found for cacheId: {}, cacheKey: {}, file: {}",
+                cacheId,
+                cacheKey,
+                actualFile
+            )
             throw FileNotFoundException("Cache file not found for cacheId: $cacheId, cacheKey: $cacheKey")
         }
 
@@ -176,13 +202,17 @@ class RetrieveFromCacheDir(
 class CacheDirectory(
     @param:Value("\${cache.directory:cache}") private val cacheDirectoryPath: String
 ) {
+    private val logger = LoggerFactory.getLogger(CacheDirectory::class.java)
 
     val cacheDirectory: Path = Paths.get(cacheDirectoryPath)
 
     init {
         // Ensure the cache directory exists
         if (!Files.exists(cacheDirectory)) {
+            logger.info("Creating cache directory: {}", cacheDirectory)
             Files.createDirectories(cacheDirectory)
+        } else {
+            logger.debug("Using existing cache directory: {}", cacheDirectory)
         }
     }
 }
