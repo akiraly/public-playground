@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import java.io.ByteArrayInputStream
 import java.io.FileNotFoundException
+import java.io.IOException
 
 class CacheControllerTest {
 
@@ -95,6 +97,64 @@ class CacheControllerTest {
                 .content(content)
         )
             .andExpect(status().isInternalServerError)
+
+        verify { storeInCache.invoke(cacheId, cacheKey, any()) }
+    }
+
+    @Test
+    fun `should return 413 when payload is too large`() {
+        // Given
+        val cacheId = CacheId("test-cache")
+        val cacheKey = CacheKey("test-key")
+        val content = "test content"
+
+        // When/Then
+        mockMvc.perform(
+            put("/cache/{cacheId}/{cacheKey}", cacheId.id, cacheKey.id)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_LENGTH, "105000000") // Set content length above the 100MB limit
+                .content(content)
+        )
+            .andExpect(status().isPayloadTooLarge)
+    }
+
+    @Test
+    fun `should return 413 when IOException with too large message occurs`() {
+        // Given
+        val cacheId = CacheId("test-cache")
+        val cacheKey = CacheKey("test-key")
+        val content = "test content"
+
+        every { storeInCache.invoke(cacheId, cacheKey, any()) } throws IOException("File too large")
+
+        // When/Then
+        mockMvc.perform(
+            put("/cache/{cacheId}/{cacheKey}", cacheId.id, cacheKey.id)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .content(content)
+        )
+            .andExpect(status().isPayloadTooLarge)
+
+        verify { storeInCache.invoke(cacheId, cacheKey, any()) }
+    }
+
+    @Test
+    fun `should handle Expect-Continue header`() {
+        // Given
+        val cacheId = CacheId("test-cache")
+        val cacheKey = CacheKey("test-key")
+        val content = "test content"
+
+        every { storeInCache.invoke(cacheId, cacheKey, any()) } returns true
+
+        // When/Then
+        mockMvc.perform(
+            put("/cache/{cacheId}/{cacheKey}", cacheId.id, cacheKey.id)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.EXPECT, "100-continue")
+                .content(content)
+        )
+            .andExpect(status().isOk)
 
         verify { storeInCache.invoke(cacheId, cacheKey, any()) }
     }
