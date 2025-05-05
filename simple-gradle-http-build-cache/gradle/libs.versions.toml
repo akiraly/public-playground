@@ -2,15 +2,19 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-gradle = "8.13"
+gradle = "8.14"
+
+commons-io = "2.19.0"
 
 spring-boot = "3.4.5"
+
+springdoc = "2.8.6"
 
 jmolecules-bom = "2023.3.1"
 
 detekt = "1.23.8"
 
-mockk = "1.14.0"
+mockk = "1.14.2"
 
 [libraries]
 spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
