@@ -25,3 +25,12 @@ plugins {
     kotlin("jvm") apply false
     kotlin("plugin.spring") apply false
 }
+
+include(
+    "sghbc",
+    "sghbc-bom",
+    "sghbc-domain",
+    "sghbc-http",
+    "sghbc-integration-tests",
+    "sghbc-store-fs"
+)

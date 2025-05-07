@@ -1,9 +1,10 @@
-package io.github.akiraly.sghbc.cache
+package io.github.akiraly.sghbc.store.fs
 
-import com.fasterxml.jackson.annotation.JsonValue
+import io.github.akiraly.sghbc.domain.CacheEntry
+import io.github.akiraly.sghbc.domain.CacheEntryId
+import io.github.akiraly.sghbc.domain.RetrieveFromCache
+import io.github.akiraly.sghbc.domain.StoreInCache
 import org.apache.commons.io.input.BoundedInputStream
-import org.jmolecules.ddd.types.Identifier
-import org.jmolecules.ddd.types.ValueObject
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.PathResource
@@ -19,32 +20,6 @@ import java.nio.file.attribute.PosixFilePermissions
 import java.security.DigestOutputStream
 import java.security.MessageDigest
 
-data class CacheId(@JsonValue val id: String) : Identifier, ValueObject {
-    init {
-        validateId(id)
-    }
-}
-
-data class CacheKey(@JsonValue val id: String) : Identifier, ValueObject {
-    init {
-        validateId(id)
-    }
-}
-
-private fun validateId(id: String) {
-    require(id.length <= 64) { "Invalid ID with length: ${id.length}" }
-    require(ID_MATCHER.matches(id)) { "Invalid ID: $id" }
-}
-
-private val ID_MATCHER = Regex("""^[0-9a-f]{32,64}$""")
-
-fun interface RetrieveFromCache {
-    /**
-     * @return A resource containing the cache entry data
-     * @throws FileNotFoundException if the cache entry does not exist
-     */
-    operator fun invoke(cacheId: CacheId, cacheKey: CacheKey): Resource
-}
 
 @Repository
 class RetrieveFromCacheDir(
@@ -52,45 +27,29 @@ class RetrieveFromCacheDir(
 ) : RetrieveFromCache {
     private val logger = LoggerFactory.getLogger(RetrieveFromCacheDir::class.java)
 
-    override fun invoke(cacheId: CacheId, cacheKey: CacheKey): Resource {
-        val cacheKeyDir = cacheDirectory.resolveDir(cacheId, cacheKey)
+    override fun invoke(id: CacheEntryId): CacheEntry {
+        val cacheKeyDir = cacheDirectory.resolveDir(id)
 
         if (!Files.exists(cacheKeyDir)) {
-            logger.debug(
-                "Cache directory not found for cacheId: {}, cacheKey: {}",
-                cacheId, cacheKey
-            )
-            throw FileNotFoundException("Cache entry not found for cacheId: $cacheId, cacheKey: $cacheKey")
+            logger.debug("Cache directory not found for {}", id)
+            throw FileNotFoundException("Cache entry not found for $id")
         }
 
         val latestLink = cacheKeyDir.resolve("latest")
         if (!Files.exists(latestLink)) {
-            logger.debug(
-                "Latest symlink not found for cacheId: {}, cacheKey: {}",
-                cacheId, cacheKey
-            )
-            throw FileNotFoundException("Latest cache entry not found for cacheId: $cacheId, cacheKey: $cacheKey")
+            logger.debug("Latest symlink not found for {}", id)
+            throw FileNotFoundException("Latest cache entry not found for $id")
         }
 
         val actualFile = cacheKeyDir.resolve(Files.readSymbolicLink(latestLink))
 
         if (!Files.exists(actualFile)) {
-            logger.debug(
-                "Cache file not found for cacheId: {}, cacheKey: {}, file: {}",
-                cacheId, cacheKey, actualFile
-            )
-            throw FileNotFoundException("Cache file not found for cacheId: $cacheId, cacheKey: $cacheKey")
+            logger.debug("Cache file not found for {}, file: {}", id, actualFile)
+            throw FileNotFoundException("Cache file not found for $id, file: $actualFile")
         }
 
-        return PathResource(actualFile)
+        return CacheEntry(id, PathResource(actualFile))
     }
-}
-
-fun interface StoreInCache {
-    /**
-     * @return true if the cache entry was stored successfully, false otherwise
-     */
-    operator fun invoke(cacheId: CacheId, cacheKey: CacheKey, content: Resource): Boolean
 }
 
 @Repository
@@ -105,17 +64,17 @@ class StoreInCacheDir(
     private val filePermissions =
         PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-r--r--"))
 
-    override fun invoke(cacheId: CacheId, cacheKey: CacheKey, content: Resource): Boolean {
+    override fun invoke(id: CacheEntryId, value: CacheEntry): Boolean {
         var tempFile: Path? = null
         try {
-            val cacheKeyDir = cacheDirectory.resolveDir(cacheId, cacheKey)
+            val cacheKeyDir = cacheDirectory.resolveDir(id)
             if (!Files.exists(cacheKeyDir)) {
                 Files.createDirectories(cacheKeyDir)
             }
 
             tempFile = cacheKeyDir.createTempFile()
 
-            val hash = content.writeTo(tempFile)
+            val hash = value.resource.writeTo(tempFile)
 
             val finalFile = cacheKeyDir.resolve(hash)
 
@@ -139,10 +98,7 @@ class StoreInCacheDir(
 
             return true
         } catch (e: Exception) {
-            logger.error(
-                "Error storing cache entry for cacheId: {}, cacheKey: {}",
-                cacheId, cacheKey, e
-            )
+            logger.error("Error storing cache entry for {}", id, e)
             return false
         } finally {
             tempFile?.let {
@@ -201,6 +157,6 @@ class CacheDirectory(
         }
     }
 
-    fun resolveDir(cacheId: CacheId, cacheKey: CacheKey): Path =
-        cacheDirectory.resolve(cacheId.id).resolve(cacheKey.id)
+    fun resolveDir(id: CacheEntryId): Path =
+        cacheDirectory.resolve(id.cacheId.value).resolve(id.gradleCacheKey.value)
 }
