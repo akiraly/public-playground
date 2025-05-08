@@ -26,7 +26,7 @@ class StoreInCacheDirTest {
     fun `should store cache entry successfully`() {
         // Given
         val cacheId = CacheId("test-cache")
-        val gradleCacheKey = GradleCacheKey("1234abcdef")
+        val gradleCacheKey = GradleCacheKey("1234abcdef1234abcdef1234abcdef1234abcdef")
         val cacheEntryId = CacheEntryId(cacheId, gradleCacheKey)
         val cacheContent = "test cache content"
         val resource = ByteArrayResource(cacheContent.toByteArray())
@@ -63,7 +63,7 @@ class StoreInCacheDirTest {
     fun `should create cache directory if it does not exist`() {
         // Given
         val cacheId = CacheId("test-cache")
-        val gradleCacheKey = GradleCacheKey("1234abcdef")
+        val gradleCacheKey = GradleCacheKey("1234abcdef1234abcdef1234abcdef1234abcdef")
         val cacheEntryId = CacheEntryId(cacheId, gradleCacheKey)
         val cacheContent = "test cache content"
         val resource = ByteArrayResource(cacheContent.toByteArray())
@@ -87,7 +87,7 @@ class StoreInCacheDirTest {
     fun `should not create duplicate files when hash already exists`() {
         // Given
         val cacheId = CacheId("test-cache")
-        val gradleCacheKey = GradleCacheKey("1234abcdef")
+        val gradleCacheKey = GradleCacheKey("1234abcdef1234abcdef1234abcdef1234abcdef")
         val cacheEntryId = CacheEntryId(cacheId, gradleCacheKey)
         val cacheContent = "test cache content"
         val resource = ByteArrayResource(cacheContent.toByteArray())
@@ -125,7 +125,7 @@ class StoreInCacheDirTest {
     fun `should update latest symlink when storing new content`() {
         // Given
         val cacheId = CacheId("test-cache")
-        val gradleCacheKey = GradleCacheKey("1234abcdef")
+        val gradleCacheKey = GradleCacheKey("1234abcdef1234abcdef1234abcdef1234abcdef")
         val cacheEntryId = CacheEntryId(cacheId, gradleCacheKey)
 
         // First content
@@ -172,7 +172,7 @@ class StoreInCacheDirTest {
     fun `should return false when an exception occurs`() {
         // Given
         val cacheId = CacheId("test-cache")
-        val gradleCacheKey = GradleCacheKey("1234abcdef")
+        val gradleCacheKey = GradleCacheKey("1234abcdef1234abcdef1234abcdef1234abcdef")
         val cacheEntryId = CacheEntryId(cacheId, gradleCacheKey)
 
         // Create a resource that throws an exception when read
@@ -196,7 +196,7 @@ class StoreInCacheDirTest {
     fun `should use cache directory to resolve paths`() {
         // Given
         val cacheId = CacheId("test-cache")
-        val gradleCacheKey = GradleCacheKey("1234abcdef")
+        val gradleCacheKey = GradleCacheKey("1234abcdef1234abcdef1234abcdef1234abcdef")
         val cacheEntryId = CacheEntryId(cacheId, gradleCacheKey)
         val cacheContent = "test cache content"
         val resource = ByteArrayResource(cacheContent.toByteArray())

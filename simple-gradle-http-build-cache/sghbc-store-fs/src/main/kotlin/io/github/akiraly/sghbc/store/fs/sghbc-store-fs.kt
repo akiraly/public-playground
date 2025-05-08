@@ -11,7 +11,6 @@ import org.springframework.core.io.PathResource
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
-import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -27,25 +26,25 @@ class RetrieveFromCacheDir(
 ) : RetrieveFromCache {
     private val logger = LoggerFactory.getLogger(RetrieveFromCacheDir::class.java)
 
-    override fun invoke(id: CacheEntryId): CacheEntry {
+    override fun invoke(id: CacheEntryId): CacheEntry? {
         val cacheKeyDir = cacheDirectory.resolveDir(id)
 
         if (!Files.exists(cacheKeyDir)) {
             logger.debug("Cache directory not found for {}", id)
-            throw FileNotFoundException("Cache entry not found for $id")
+            return null
         }
 
         val latestLink = cacheKeyDir.resolve("latest")
         if (!Files.exists(latestLink)) {
             logger.debug("Latest symlink not found for {}", id)
-            throw FileNotFoundException("Latest cache entry not found for $id")
+            return null
         }
 
         val actualFile = cacheKeyDir.resolve(Files.readSymbolicLink(latestLink))
 
         if (!Files.exists(actualFile)) {
             logger.debug("Cache file not found for {}, file: {}", id, actualFile)
-            throw FileNotFoundException("Cache file not found for $id, file: $actualFile")
+            return null
         }
 
         return CacheEntry(id, PathResource(actualFile))

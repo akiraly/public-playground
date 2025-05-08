@@ -7,9 +7,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
-import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.assertEquals
@@ -46,12 +44,13 @@ class RetrieveFromCacheDirTest {
         val result = retrieveFromCache(cacheEntryId)
 
         // Then
+        assertTrue(result != null)
         assertEquals(cacheEntryId, result.id)
         assertTrue(Files.isSameFile(hashFile, result.resource.file.toPath()))
     }
 
     @Test
-    fun `should throw FileNotFoundException when cache directory does not exist`() {
+    fun `should return null when cache directory does not exist`() {
         // Given
         val cacheId = CacheId("test-cache")
         val gradleCacheKey = GradleCacheKey("1234abcdef1234abcdef1234abcdef1234abcdef")
@@ -60,14 +59,15 @@ class RetrieveFromCacheDirTest {
         val cacheDirectory = CacheDirectory(tempDir.toString())
         val retrieveFromCache = RetrieveFromCacheDir(cacheDirectory)
 
-        // When/Then
-        assertThrows<FileNotFoundException> {
-            retrieveFromCache(cacheEntryId)
-        }
+        // When
+        val result = retrieveFromCache(cacheEntryId)
+
+        // Then
+        assertEquals(null, result)
     }
 
     @Test
-    fun `should throw FileNotFoundException when latest symlink does not exist`() {
+    fun `should return null when latest symlink does not exist`() {
         // Given
         val cacheId = CacheId("test-cache")
         val gradleCacheKey = GradleCacheKey("1234abcdef1234abcdef1234abcdef1234abcdef")
@@ -80,14 +80,15 @@ class RetrieveFromCacheDirTest {
         val cacheDirectory = CacheDirectory(tempDir.toString())
         val retrieveFromCache = RetrieveFromCacheDir(cacheDirectory)
 
-        // When/Then
-        assertThrows<FileNotFoundException> {
-            retrieveFromCache(cacheEntryId)
-        }
+        // When
+        val result = retrieveFromCache(cacheEntryId)
+
+        // Then
+        assertEquals(null, result)
     }
 
     @Test
-    fun `should throw FileNotFoundException when cache file does not exist`() {
+    fun `should return null when cache file does not exist`() {
         // Given
         val cacheId = CacheId("test-cache")
         val gradleCacheKey = GradleCacheKey("1234abcdef1234abcdef1234abcdef1234abcdef")
@@ -105,10 +106,11 @@ class RetrieveFromCacheDirTest {
         val cacheDirectory = CacheDirectory(tempDir.toString())
         val retrieveFromCache = RetrieveFromCacheDir(cacheDirectory)
 
-        // When/Then
-        assertThrows<FileNotFoundException> {
-            retrieveFromCache(cacheEntryId)
-        }
+        // When
+        val result = retrieveFromCache(cacheEntryId)
+
+        // Then
+        assertEquals(null, result)
     }
 
     @Test
@@ -139,6 +141,7 @@ class RetrieveFromCacheDirTest {
 
         // Then
         verify { cacheDirectory.resolveDir(cacheEntryId) }
+        assertTrue(result != null)
         assertEquals(cacheEntryId, result.id)
         assertTrue(Files.isSameFile(hashFile, result.resource.file.toPath()))
     }

@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import java.io.FileNotFoundException
 
 class HttpGetCacheEntryTest {
 
@@ -58,7 +57,7 @@ class HttpGetCacheEntryTest {
         val cacheEntryId = CacheEntryId(cacheId, gradleCacheKey)
 
         val retrieveFromCache = mockk<RetrieveFromCache>()
-        every { retrieveFromCache.invoke(cacheEntryId) } throws FileNotFoundException("Cache entry not found")
+        every { retrieveFromCache.invoke(cacheEntryId) } returns null
 
         val controller = HttpGetCacheEntry(retrieveFromCache)
         val mockMvc = MockMvcBuilders.standaloneSetup(controller).build()

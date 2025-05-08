@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
-import java.io.FileNotFoundException
 import java.io.IOException
 
 @RestController
@@ -47,12 +46,14 @@ class HttpGetCacheEntry(
         val id = CacheEntryId(cacheId, gradleCacheKey)
         return try {
             val cacheEntry = retrieveFromCache(id)
-            ResponseEntity.ok()
-                .contentType(APPLICATION_OCTET_STREAM)
-                .body(cacheEntry.resource)
-        } catch (_: FileNotFoundException) {
-            logger.debug("Cache entry not found for {}", id)
-            ResponseEntity.notFound().build()
+            if (cacheEntry == null) {
+                logger.debug("Cache entry not found for {}", id)
+                ResponseEntity.notFound().build()
+            } else {
+                ResponseEntity.ok()
+                    .contentType(APPLICATION_OCTET_STREAM)
+                    .body(cacheEntry.resource)
+            }
         } catch (e: Exception) {
             logger.error("Error retrieving cache entry for {}", id, e)
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
