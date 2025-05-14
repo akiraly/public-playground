@@ -4,6 +4,8 @@
 [versions]
 gradle = "8.14"
 
+kotlin = "2.1.21"
+
 commons-io = "2.19.0"
 
 spring-boot = "3.4.5"
@@ -19,7 +21,5 @@ mockk = "1.14.2"
 [libraries]
 spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 [plugins]
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
