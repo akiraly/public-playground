@@ -20,9 +20,19 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     runtimeOnly("org.springdoc:springdoc-openapi-starter-webmvc-ui:${libs.versions.springdoc.get()}")
 
+    implementation("org.springframework:spring-context")
+    implementation("org.springframework.boot:spring-boot")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
+
     implementation(kotlin("stdlib"))
 
     testImplementation(kotlin("test"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("io.mockk:mockk:${libs.versions.mockk.get()}")
+    testImplementation("org.hamcrest:hamcrest")
+    testImplementation("org.springframework:spring-beans")
+    testImplementation("org.springframework:spring-test")
+    testImplementation("org.springframework.boot:spring-boot-test")
+    testImplementation("org.springframework.boot:spring-boot-test-autoconfigure")
 }

@@ -29,17 +29,16 @@ plugins {
 dependencyAnalysis {
     issues {
         all {
-            onUnusedDependencies {
+            onAny {
                 severity("fail")
+            }
 
+            onUnusedDependencies {
                 exclude("org.springframework.boot:spring-boot-starter")
                 exclude("org.springframework.boot:spring-boot-starter-test")
                 exclude("org.springframework.boot:spring-boot-starter-web")
 
                 exclude("org.jetbrains.kotlin:kotlin-test")
-            }
-            onUsedTransitiveDependencies {
-                severity("warn")
             }
         }
     }

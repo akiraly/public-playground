@@ -17,7 +17,14 @@ dependencies {
 
     implementation(kotlin("stdlib"))
 
+    api("org.springframework:spring-beans")
+    api("org.springframework:spring-core")
+    api("org.springframework:spring-web")
+
     testImplementation(kotlin("test"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("io.mockk:mockk:${libs.versions.mockk.get()}")
+    testImplementation("io.mockk:mockk-dsl:${libs.versions.mockk.get()}")
+    testImplementation("org.springframework:spring-test")
 }
