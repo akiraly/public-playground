@@ -3,16 +3,13 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":sghbc-domain"))
+    api(project(":sghbc-domain"))
 
+    api(platform(libs.spring.boot.dependencies))
     implementation(platform(libs.spring.boot.dependencies))
     implementation(platform("org.jmolecules:jmolecules-bom:${libs.versions.jmolecules.bom.get()}"))
 
-    implementation("commons-io:commons-io:${libs.versions.commons.io.get()}")
-
-    implementation("org.jmolecules:kmolecules-ddd")
-    implementation("com.fasterxml.jackson.core:jackson-annotations")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.slf4j:slf4j-api")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -22,6 +19,5 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation(libs.mockk)
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.mockk:mockk:${libs.versions.mockk.get()}")
 }

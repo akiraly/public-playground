@@ -26,6 +26,25 @@ plugins {
     kotlin("plugin.spring") apply false
 }
 
+dependencyAnalysis {
+    issues {
+        all {
+            onUnusedDependencies {
+                severity("fail")
+
+                exclude("org.springframework.boot:spring-boot-starter")
+                exclude("org.springframework.boot:spring-boot-starter-test")
+                exclude("org.springframework.boot:spring-boot-starter-web")
+
+                exclude("org.jetbrains.kotlin:kotlin-test")
+            }
+            onUsedTransitiveDependencies {
+                severity("warn")
+            }
+        }
+    }
+}
+
 include(
     "sghbc",
     "sghbc-bom",
