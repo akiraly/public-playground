@@ -125,6 +125,66 @@ verify { validateUser.invoke(expectedUser) }
 
 ## Contribution Workflow
 
-- Follow a conventional commit format: `type(scope): message`
+- Follow the Conventional Commits specification: `type(scope): message`
+  - Types include: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+  - Example: `feat(cache): add support for custom expiration policy`
+  - Breaking changes should be indicated with a `!` after the scope: `feat(api)!: change authentication method`
+- Follow the 50/72 rule for commit messages:
+  - The first line (subject) should be limited to 50 characters
+  - Leave a blank line after the subject
+  - Wrap the body text at 72 characters per line
+  - Use the body to explain what and why, not how
+
+### Commit Message Examples
+
+Here are some examples of well-formatted commit messages following both the Conventional Commits specification and the 50/72 rule:
+
+```
+feat(cache): implement file-based cache storage
+
+Implement a file system based cache storage mechanism that stores
+cache entries on disk using the specified directory structure. This
+enables persistent caching between application restarts.
+```
+
+```
+fix(http): correct content-type header in responses
+
+The content-type header was incorrectly set to text/plain instead of
+application/octet-stream, causing some Gradle clients to misinterpret
+the cache entries.
+```
+
+```
+docs(readme): update installation instructions
+
+Update the README with more detailed installation instructions and
+prerequisites to make it easier for new users to get started with
+the project.
+```
+
+```
+refactor(core): simplify cache key generation logic
+
+Simplify the algorithm for generating cache keys to improve
+readability and maintainability. No functional changes.
+```
+
+```
+test(integration): add tests for cache expiration
+
+Add integration tests to verify that cache entries are properly
+expired according to the configured TTL settings.
+```
+
+```
+feat(api)!: change authentication method
+
+Change from basic auth to token-based authentication for improved
+security. This is a breaking change that requires clients to update
+their configuration.
+
+BREAKING CHANGE: Clients need to use the new token-based auth method.
+```
 - All code must be reviewed before merging
 - Ensure tests pass and coverage requirements are met
