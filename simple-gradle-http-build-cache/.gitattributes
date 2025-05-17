@@ -14,10 +14,11 @@
 *.json text
 *.toml text
 *.txt text
-gradlew txt
+gradlew text
 
 # Declare files that will always have CRLF line endings on checkout.
 *.bat text eol=crlf
+*.cmd text eol=crlf
 
 # Binary files should be left untouched
 *.jar -text
