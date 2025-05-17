@@ -1,0 +1,16 @@
+import org.gradle.caching.http.HttpBuildCache
+
+rootProject.name = 'test-gradle-project'
+
+// Build cache configuration
+buildCache {
+    local {
+        enabled = false
+    }
+    remote(HttpBuildCache) {
+        url = 'http://localhost:8123/cache/'
+        enabled = true
+        push = true
+        allowInsecureProtocol = true
+    }
+}
