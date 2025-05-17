@@ -63,13 +63,34 @@ class SghbcGradleCacheIntegrationTest {
 
         FileUtils.copyDirectory(sourceDir, targetDir)
 
-        // Create a dummy gradle-wrapper.jar if it doesn't exist
-        val wrapperJar = targetDir.resolve("gradle/wrapper/gradle-wrapper.jar")
-        if (!wrapperJar.exists() || wrapperJar.length() == 0L) {
-            wrapperJar.createNewFile()
-            // Write some dummy content to the file
-            wrapperJar.writeBytes(byteArrayOf(0x50, 0x4B, 0x03, 0x04)) // PK header for ZIP files
-        }
+        // Copy Gradle wrapper files from the root project
+        val rootDir = File(System.getProperty("user.dir")).absoluteFile.parentFile
+
+        // Copy gradle-wrapper.jar and gradle-wrapper.properties
+        val rootWrapperDir = rootDir.resolve("gradle/wrapper")
+        val targetWrapperDir = targetDir.resolve("gradle/wrapper")
+        targetWrapperDir.mkdirs()
+
+        FileUtils.copyFile(
+            rootWrapperDir.resolve("gradle-wrapper.jar"),
+            targetWrapperDir.resolve("gradle-wrapper.jar")
+        )
+
+        FileUtils.copyFile(
+            rootWrapperDir.resolve("gradle-wrapper.properties"),
+            targetWrapperDir.resolve("gradle-wrapper.properties")
+        )
+
+        // Copy gradlew and gradlew.bat
+        FileUtils.copyFile(
+            rootDir.resolve("gradlew"),
+            targetDir.resolve("gradlew")
+        )
+
+        FileUtils.copyFile(
+            rootDir.resolve("gradlew.bat"),
+            targetDir.resolve("gradlew.bat")
+        )
 
         // Make gradlew executable on Unix-like systems
         if (!System.getProperty("os.name").lowercase().contains("windows")) {

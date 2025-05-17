@@ -14,9 +14,11 @@ trim_trailing_whitespace = false
 [*.bat]
 end_of_line = crlf
 
-[{*.kt,*.kts,*.java}]
+[*.java]
 ij_java_use_single_class_imports = true
 ij_java_class_count_to_use_import_on_demand = 999
 ij_java_names_count_to_use_import_on_demand = 999
+
+[{*.kt,*.kts}]
 ij_kotlin_name_count_to_use_star_import = 999
 ij_kotlin_name_count_to_use_star_import_for_members = 999
