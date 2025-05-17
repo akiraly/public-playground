@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// This task will always fail
+task failingTask {
+    doLast {
+        throw new GradleException("This build is intentionally failing for testing purposes")
+    }
+}
+
+// Make the build depend on the failing task
+build.dependsOn failingTask
+
+// Make the build more cacheable
+tasks.withType(JavaCompile).configureEach {
+    options.fork = true
+    options.incremental = true
+}

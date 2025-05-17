@@ -14,6 +14,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermission
 import java.util.concurrent.TimeUnit
+import kotlin.test.assertEquals
 
 @SpringBootTest(
     properties = ["spring.main.allow-bean-definition-overriding=true"],
@@ -56,10 +57,35 @@ class SghbcGradleCacheIntegrationTest {
         )
     }
 
-    private fun copyTestProject(): Path {
-        val resourcesPath = Paths.get("src", "test", "resources", "test-gradle-project")
+    @Test
+    fun `should detect failing Gradle build`() {
+        // Given: A failing test Gradle project configured to use our cache
+        val testProjectDir = copyFailingTestProject()
+        updateBuildCacheUrl(testProjectDir)
+
+        // When: Running the build that should fail
+        val (output, exitCode) = runFailingGradleBuild(testProjectDir, "build")
+
+        // Then: The build should fail with a non-zero exit code
+        assertTrue(exitCode != 0, "Build should fail with a non-zero exit code, but was: $exitCode")
+
+        // And: The output should contain the expected error message
+        assertTrue(
+            output.contains("This build is intentionally failing for testing purposes"),
+            "Build output should contain the expected error message, but was: $output"
+        )
+    }
+
+    /**
+     * Copies a Gradle project from the test resources to a temporary directory.
+     *
+     * @param projectName The name of the project to copy (e.g., "test-gradle-project" or "failing-gradle-project")
+     * @return The path to the copied project directory
+     */
+    private fun copyGradleProject(projectName: String): Path {
+        val resourcesPath = Paths.get("src", "test", "resources", projectName)
         val sourceDir = File(resourcesPath.toString()).absoluteFile
-        val targetDir = tempDir.resolve("test-gradle-project").toFile()
+        val targetDir = tempDir.resolve(projectName).toFile()
 
         FileUtils.copyDirectory(sourceDir, targetDir)
 
@@ -119,6 +145,10 @@ class SghbcGradleCacheIntegrationTest {
         return targetDir.toPath()
     }
 
+    // Convenience methods to maintain backward compatibility
+    private fun copyTestProject(): Path = copyGradleProject("test-gradle-project")
+    private fun copyFailingTestProject(): Path = copyGradleProject("failing-gradle-project")
+
     private fun updateBuildCacheUrl(projectDir: Path) {
         val settingsFile = projectDir.resolve("settings.gradle").toFile()
         val content = FileUtils.readFileToString(settingsFile, StandardCharsets.UTF_8)
@@ -130,7 +160,20 @@ class SghbcGradleCacheIntegrationTest {
     }
 
 
-    private fun runGradleBuild(projectDir: Path, vararg tasks: String): String {
+    /**
+     * Runs a Gradle build and returns the output and exit code.
+     *
+     * @param projectDir The directory containing the Gradle project
+     * @param expectFailure Whether the build is expected to fail (if true, won't throw exception on non-zero exit code)
+     * @param tasks The Gradle tasks to run
+     * @return A pair containing the build output and exit code
+     * @throws RuntimeException if the build fails and expectFailure is false, or if the build times out
+     */
+    private fun runGradleBuild(
+        projectDir: Path,
+        expectFailure: Boolean = false,
+        vararg tasks: String
+    ): Pair<String, Int> {
         val command = mutableListOf<String>()
 
         // Try different commands to run Gradle
@@ -182,11 +225,24 @@ class SghbcGradleCacheIntegrationTest {
             throw RuntimeException("Gradle build timed out")
         }
 
-        // Check the exit code
-        if (process.exitValue() != 0) {
-            throw RuntimeException("Gradle build failed with exit code ${process.exitValue()}: $output")
+        val exitCode = process.exitValue()
+
+        // Check if the build was successful when not expecting failure
+        if (!expectFailure && exitCode != 0) {
+            throw RuntimeException("Gradle build failed with exit code $exitCode: $output")
         }
 
+        return Pair(output, exitCode)
+    }
+
+    // Convenience methods to maintain backward compatibility
+    private fun runGradleBuild(projectDir: Path, vararg tasks: String): String {
+        val (output, exitCode) = runGradleBuild(projectDir, false, *tasks)
+        assertEquals(0, exitCode, "Build should have been successful")
         return output
+    }
+
+    private fun runFailingGradleBuild(projectDir: Path, vararg tasks: String): Pair<String, Int> {
+        return runGradleBuild(projectDir, true, *tasks)
     }
 }
