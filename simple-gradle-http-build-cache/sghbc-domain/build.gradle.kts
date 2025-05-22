@@ -11,7 +11,6 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-annotations")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    implementation(kotlin("stdlib"))
     api("org.springframework:spring-core")
 
     testImplementation(kotlin("test"))

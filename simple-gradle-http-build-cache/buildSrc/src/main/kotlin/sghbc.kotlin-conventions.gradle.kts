@@ -76,7 +76,3 @@ tasks.named("check") {
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting")
 }
-
-repositories {
-    mavenCentral()
-}

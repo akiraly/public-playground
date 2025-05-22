@@ -16,8 +16,6 @@ dependencies {
 
     runtimeOnly("org.springdoc:springdoc-openapi-starter-webmvc-ui:${libs.versions.springdoc.get()}")
 
-    implementation(kotlin("stdlib"))
-
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
     implementation("org.springframework:spring-core")
