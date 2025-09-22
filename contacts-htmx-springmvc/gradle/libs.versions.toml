@@ -8,15 +8,13 @@ kotlin = "2.2.20"
 
 commons-io = "2.20.0"
 
-spring-boot = "3.5.5"
+spring-boot = "3.5.6"
 
-springdoc = "2.8.9"
+springdoc = "2.8.13"
 
-jmolecules-bom = "2023.3.2"
+jmolecules-bom = "2023.3.4"
 
-detekt = "1.23.8"
-
-mockk = "1.14.2"
+mockk = "1.14.5"
 
 [libraries]
 spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }

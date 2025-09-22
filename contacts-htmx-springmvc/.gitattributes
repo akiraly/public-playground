@@ -1,0 +1,25 @@
+# Set default behavior to always lf
+* text eol=lf
+
+# Explicitly declare text files
+*.gradle text
+*.java text
+*.kt text
+*.kts text
+*.md text
+*.properties text
+*.xml text
+*.yml text
+*.yaml text
+*.json text
+*.toml text
+*.txt text
+gradlew text
+
+# Declare files that will always have CRLF line endings on checkout.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files should be left untouched
+*.jar -text
+
