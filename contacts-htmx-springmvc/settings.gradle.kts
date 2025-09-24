@@ -1,40 +1,37 @@
-import org.codehaus.groovy.tools.shell.util.Logger.io
-
 pluginManagement {
-  repositories {
-    gradlePluginPortal()
-  }
-  plugins {
-    val foojayResolver: String by settings
-    id("org.gradle.toolchains.foojay-resolver-convention") version foojayResolver
+    repositories {
+        gradlePluginPortal()
+    }
+    plugins {
+        val foojayResolver: String by settings
+        id("org.gradle.toolchains.foojay-resolver-convention") version foojayResolver
 
-    val buildHealth: String by settings
-    id("com.autonomousapps.build-health") version buildHealth
+        val buildHealth: String by settings
+        id("com.autonomousapps.build-health") version buildHealth
 
-    val kotlinVersion: String by settings
-    kotlin("jvm") version kotlinVersion
-    kotlin("plugin.spring") version kotlinVersion
-  }
+        val detekt: String by settings
+        id("io.gitlab.arturbosch.detekt") version detekt
+
+        val kotlinVersion: String by settings
+        kotlin("jvm") version kotlinVersion
+        kotlin("plugin.spring") version kotlinVersion
+    }
 }
 
 dependencyResolutionManagement {
-  repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
-  repositories {
-    mavenCentral()
-  }
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
+    repositories {
+        mavenCentral()
+    }
 }
 
 plugins {
-    val foojayResolver: String by settings
-  id("org.gradle.toolchains.foojay-resolver-convention") version foojayResolver
+    id("org.gradle.toolchains.foojay-resolver-convention")
 
-    val buildHealth: String by settings
-  id("com.autonomousapps.build-health") version buildHealth
+    id("com.autonomousapps.build-health")
 
-  kotlin("jvm") apply false
-  kotlin("plugin.spring") apply false
-
-    io.gitlab.arturbosch.detekt:io.gitlab.arturbosch.detekt.gradle.plugin:${libs.versions.detekt.get()}
+    kotlin("jvm") apply false
+    kotlin("plugin.spring") apply false
 }
 
 dependencyAnalysis {
