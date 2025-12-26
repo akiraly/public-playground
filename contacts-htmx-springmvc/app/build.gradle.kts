@@ -87,7 +87,7 @@ dependencies {
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
-    runtimeOnly("org.springdoc:springdoc-openapi-starter-webmvc-ui:${libs.versions.springdoc.get()}")
+    //runtimeOnly("org.springdoc:springdoc-openapi-starter-webmvc-ui:${libs.versions.springdoc.get()}")
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot")
