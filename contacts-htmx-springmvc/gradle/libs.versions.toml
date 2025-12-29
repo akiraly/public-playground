@@ -4,17 +4,19 @@
 [versions]
 gradle = "9.2.1"
 
-kotlin = "2.3.0"
-
 commons-io = "2.21.0"
 
 spring-boot = "4.0.1"
 
 springdoc = "3.0.0"
 
-jmolecules-bom = "2025.0.1"
+jmolecules-bom = "2025.0.2"
 
 mockk = "1.14.7"
+
+htmx = "2.0.8"
+
+kotlinx-html = "0.12.0"
 
 [libraries]
 spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }

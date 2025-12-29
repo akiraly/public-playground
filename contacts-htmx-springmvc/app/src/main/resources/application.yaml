@@ -1,0 +1,7 @@
+server:
+    compression:
+        enabled: true
+
+contactsapp:
+    db:
+        file: contacts.db.json

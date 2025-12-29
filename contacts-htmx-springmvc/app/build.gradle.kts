@@ -84,7 +84,15 @@ dependencies {
     implementation(platform(libs.spring.boot.dependencies))
     implementation(platform("org.jmolecules:jmolecules-bom:${libs.versions.jmolecules.bom.get()}"))
 
+    implementation("org.jmolecules:kmolecules-ddd")
+
+    implementation("org.slf4j:slf4j-api")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${libs.versions.kotlinx.html.get()}")
+
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    runtimeOnly("org.webjars.npm:htmx.org:${libs.versions.htmx.get()}")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     //runtimeOnly("org.springdoc:springdoc-openapi-starter-webmvc-ui:${libs.versions.springdoc.get()}")
