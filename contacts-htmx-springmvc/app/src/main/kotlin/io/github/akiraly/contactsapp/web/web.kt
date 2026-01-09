@@ -1,5 +1,6 @@
 package io.github.akiraly.contactsapp.web
 
+import io.github.akiraly.contactsapp.domain.Contact
 import io.github.akiraly.contactsapp.repo.LoadAllContacts
 import io.github.akiraly.contactsapp.repo.SearchContacts
 import org.springframework.http.HttpStatus
@@ -22,6 +23,6 @@ class GetContacts(
     val searchContacts: SearchContacts
 ) {
     @GetMapping("/contacts")
-    operator fun invoke(): ResponseEntity<String> =
-        ResponseEntity.ok().body("Contacts: Hello, World!")
+    operator fun invoke(): ResponseEntity<Set<Contact>> =
+        ResponseEntity.ok().body(loadAllContacts())
 }

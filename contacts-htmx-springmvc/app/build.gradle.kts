@@ -90,7 +90,8 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${libs.versions.kotlinx.html.get()}")
 
-    runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("tools.jackson.core:jackson-databind")
+    implementation("tools.jackson.module:jackson-module-kotlin")
 
     runtimeOnly("org.webjars.npm:htmx.org:${libs.versions.htmx.get()}")
 
@@ -106,6 +107,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("io.mockk:mockk:${libs.versions.mockk.get()}")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:${libs.versions.mockito.kotlin.get()}")
     testImplementation("org.hamcrest:hamcrest")
     testImplementation("org.springframework:spring-beans")
     testImplementation("org.springframework:spring-test")

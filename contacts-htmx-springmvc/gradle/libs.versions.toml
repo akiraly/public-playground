@@ -14,6 +14,8 @@ jmolecules-bom = "2025.0.2"
 
 mockk = "1.14.7"
 
+mockito-kotlin = "6.1.0"
+
 htmx = "2.0.8"
 
 kotlinx-html = "0.12.0"

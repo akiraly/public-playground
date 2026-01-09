@@ -4,4 +4,4 @@ server:
 
 contactsapp:
     db:
-        file: contacts.db.json
+        file: app/contacts.db.json
