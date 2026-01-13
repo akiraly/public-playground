@@ -94,6 +94,8 @@ dependencies {
     implementation("tools.jackson.module:jackson-module-kotlin")
 
     runtimeOnly("org.webjars.npm:htmx.org:${libs.versions.htmx.get()}")
+    runtimeOnly("org.webjars.npm:hyperscript.org:${libs.versions.hyperscript.get()}")
+    runtimeOnly("org.webjars.npm:alpinejs:${libs.versions.alpinejs.get()}")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     //runtimeOnly("org.springdoc:springdoc-openapi-starter-webmvc-ui:${libs.versions.springdoc.get()}")

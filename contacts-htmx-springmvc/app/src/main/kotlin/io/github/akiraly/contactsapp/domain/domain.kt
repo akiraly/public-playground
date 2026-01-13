@@ -15,8 +15,8 @@ data class Contact(
     val email: String
 ) : AggregateRoot<Contact, ContactId> {
     fun matches(search: String): Boolean =
-        first.contains(search)
-            || last.contains(search)
-            || phone.contains(search)
-            || email.contains(search)
+        first.contains(search, ignoreCase = true)
+            || last.contains(search, ignoreCase = true)
+            || phone.contains(search, ignoreCase = true)
+            || email.contains(search, ignoreCase = true)
 }
