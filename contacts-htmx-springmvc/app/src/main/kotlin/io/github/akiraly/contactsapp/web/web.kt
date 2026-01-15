@@ -3,6 +3,7 @@ package io.github.akiraly.contactsapp.web
 import io.github.akiraly.contactsapp.domain.Contact
 import io.github.akiraly.contactsapp.repo.LoadAllContacts
 import io.github.akiraly.contactsapp.repo.SearchContacts
+import kotlinx.html.FlowContent
 import kotlinx.html.FormMethod
 import kotlinx.html.InputType
 import kotlinx.html.a
@@ -54,11 +55,57 @@ class GetContacts(
         @RequestParam("q", required = false) search: String? = null
     ): ResponseEntity<String> {
         val contacts = if (search != null) searchContacts(search) else loadAllContacts()
-        return ResponseEntity.ok().body(buildContactsHTML(search, contacts))
+        return ResponseEntity.ok().body(buildContactListHTML(search, contacts))
     }
 }
 
-fun buildContactsHTML(search: String?, contacts: Set<Contact>): String {
+fun buildContactListHTML(search: String?, contacts: Set<Contact>): String =
+    buildContactsAppHTML {
+        form(action = "/contacts", method = FormMethod.get, classes = "tool-bar") {
+            label {
+                htmlFor = "search"
+                +"Search Term"
+            }
+            input(type = InputType.search, name = "q") {
+                id = "search"
+                value = search ?: ""
+            }
+            input(type = InputType.submit) {
+                value = "Search"
+            }
+        }
+        table {
+            thead {
+                tr {
+                    th { +"First" }
+                    th { +"Last" }
+                    th { +"Phone" }
+                    th { +"Email" }
+                    th {}
+                }
+            }
+            tbody {
+                contacts.forEach { contact ->
+                    tr {
+                        td { +contact.first }
+                        td { +contact.last }
+                        td { +contact.phone }
+                        td { +contact.email }
+                        td {
+                            a(href = "/contacts/${contact.id}/edit") { +"Edit" }
+                            +" "
+                            a(href = "/contacts/${contact.id}") { +"View" }
+                        }
+                    }
+                }
+            }
+        }
+        p {
+            a(href = "/contacts/new") { +"Add Contact" }
+        }
+    }
+
+fun buildContactsAppHTML(content: FlowContent.() -> Unit): String {
 
     return "<!doctype html>\n" + createHTML().html {
         lang = "en"
@@ -89,47 +136,8 @@ fun buildContactsHTML(search: String?, contacts: Set<Contact>): String {
                         }
                     }
                 }
-                form(action = "/contacts", method = FormMethod.get, classes = "tool-bar") {
-                    label {
-                        htmlFor = "search"
-                        +"Search Term"
-                    }
-                    input(type = InputType.search, name = "q") {
-                        id = "search"
-                        value = search ?: ""
-                    }
-                    input(type = InputType.submit) {
-                        value = "Search"
-                    }
-                }
-                table {
-                    thead {
-                        tr {
-                            th { +"First" }
-                            th { +"Last" }
-                            th { +"Phone" }
-                            th { +"Email" }
-                        }
-                    }
-                    tbody {
-                        contacts.forEach { contact ->
-                            tr {
-                                td { +contact.first }
-                                td { +contact.last }
-                                td { +contact.phone }
-                                td { +contact.email }
-                                td {
-                                    a(href = "/contacts/${contact.id}/edit") { +"Edit" }
-                                    +" "
-                                    a(href = "/contacts/${contact.id}") { +"View" }
-                                }
-                            }
-                        }
-                    }
-                }
-                p {
-                    a(href = "/contacts/new") { +"Add Contact" }
-                }
+
+                content()
             }
         }
     }.trim()
