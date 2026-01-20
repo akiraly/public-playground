@@ -49,11 +49,10 @@ import java.net.URI
 @RestController
 class GetIndexPage {
     @GetMapping("/")
-    operator fun invoke(): ResponseEntity<Void> = redirectToContactListPage()
+    operator fun invoke(): ResponseEntity<Void> =redirectToContactListPage()
 }
 
-private fun redirectToContactListPage(): ResponseEntity<Void> =
-    ResponseEntity
+private fun redirectToContactListPage(): ResponseEntity<Void> = ResponseEntity
         .status(HttpStatus.TEMPORARY_REDIRECT)
         .location(URI.create("/contacts"))
         .build()
@@ -136,7 +135,10 @@ class PostContactUpsertRequest(
         return if (result.errors.isNotEmpty())
             ResponseEntity.badRequest().body(buildNewContactPage(result))
         else
-            redirectToContactListPage()
+            ResponseEntity
+                .status(HttpStatus.SEE_OTHER)
+                .location(URI.create("/contacts"))
+                .build()
     }
 }
 
