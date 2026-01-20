@@ -1,7 +1,7 @@
 package io.github.akiraly.contactsapp.repo
 
 import io.github.akiraly.contactsapp.domain.Contact
-import io.github.akiraly.contactsapp.domain.ContactId
+import io.github.akiraly.contactsapp.domain.ContactRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -21,17 +21,22 @@ data class ContactDb(@param:Value($$"${contactsapp.db.file}") val file: Path) {
     }
 }
 
-interface ContactRepository : org.jmolecules.ddd.types.Repository<Contact, ContactId>
-
 @Repository
 class SearchContacts(val loadAllContacts: LoadAllContacts) : ContactRepository {
     operator fun invoke(search: String): Set<Contact> =
         loadAllContacts().asSequence().filter { it.matches(search) }.toSet()
 }
 
+private val om: ObjectMapper = jacksonObjectMapper()
+
 @Repository
 class LoadAllContacts(val db: ContactDb) : ContactRepository {
-    private val om: ObjectMapper = jacksonObjectMapper()
-
     operator fun invoke(): Set<Contact> = om.readValue<Set<Contact>>(db.file.toFile())
+}
+
+@Repository
+class SaveAllContacts(val db: ContactDb) : ContactRepository {
+    operator fun invoke(contacts: Set<Contact>) {
+        om.writeValue(db.file.toFile(), contacts)
+    }
 }

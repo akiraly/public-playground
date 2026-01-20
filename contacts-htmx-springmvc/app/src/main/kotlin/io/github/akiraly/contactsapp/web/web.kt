@@ -1,6 +1,9 @@
 package io.github.akiraly.contactsapp.web
 
 import io.github.akiraly.contactsapp.domain.Contact
+import io.github.akiraly.contactsapp.domain.ContactUpsertRequest
+import io.github.akiraly.contactsapp.domain.ContactUpsertResult
+import io.github.akiraly.contactsapp.domain.UpsertContact
 import io.github.akiraly.contactsapp.repo.LoadAllContacts
 import io.github.akiraly.contactsapp.repo.SearchContacts
 import kotlinx.html.FlowContent
@@ -8,6 +11,8 @@ import kotlinx.html.FormMethod
 import kotlinx.html.InputType
 import kotlinx.html.a
 import kotlinx.html.body
+import kotlinx.html.button
+import kotlinx.html.fieldSet
 import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.head
@@ -17,10 +22,12 @@ import kotlinx.html.id
 import kotlinx.html.input
 import kotlinx.html.label
 import kotlinx.html.lang
+import kotlinx.html.legend
 import kotlinx.html.link
 import kotlinx.html.main
 import kotlinx.html.p
 import kotlinx.html.script
+import kotlinx.html.span
 import kotlinx.html.stream.createHTML
 import kotlinx.html.table
 import kotlinx.html.tbody
@@ -33,20 +40,26 @@ import kotlinx.html.unsafe
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
 @RestController
-class GetIndex {
+class GetIndexPage {
     @GetMapping("/")
-    operator fun invoke(): ResponseEntity<Void> =
-        ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT).location(URI.create("/contacts"))
-            .build()
+    operator fun invoke(): ResponseEntity<Void> = redirectToContactListPage()
 }
 
+private fun redirectToContactListPage(): ResponseEntity<Void> =
+    ResponseEntity
+        .status(HttpStatus.TEMPORARY_REDIRECT)
+        .location(URI.create("/contacts"))
+        .build()
+
 @RestController
-class GetContacts(
+class GetContactListPage(
     val loadAllContacts: LoadAllContacts,
     val searchContacts: SearchContacts
 ) {
@@ -55,11 +68,11 @@ class GetContacts(
         @RequestParam("q", required = false) search: String? = null
     ): ResponseEntity<String> {
         val contacts = if (search != null) searchContacts(search) else loadAllContacts()
-        return ResponseEntity.ok().body(buildContactListHTML(search, contacts))
+        return ResponseEntity.ok().body(buildContactListPage(search, contacts))
     }
 }
 
-fun buildContactListHTML(search: String?, contacts: Set<Contact>): String =
+fun buildContactListPage(search: String?, contacts: Set<Contact>): String =
     buildContactsAppHTML {
         form(action = "/contacts", method = FormMethod.get, classes = "tool-bar") {
             label {
@@ -102,6 +115,99 @@ fun buildContactListHTML(search: String?, contacts: Set<Contact>): String =
         }
         p {
             a(href = "/contacts/new") { +"Add Contact" }
+        }
+    }
+
+@RestController
+class GetNewContactPage {
+    @GetMapping("/contacts/new")
+    operator fun invoke(): ResponseEntity<String> {
+        return ResponseEntity.ok().body(buildNewContactPage(ContactUpsertResult()))
+    }
+}
+
+@RestController
+class PostContactUpsertRequest(
+    val upsertContact: UpsertContact
+) {
+    @PostMapping("/contacts/new")
+    operator fun invoke(@ModelAttribute contactUpsertRequest: ContactUpsertRequest): ResponseEntity<out Any> {
+        val result = upsertContact(contactUpsertRequest)
+        return if (result.errors.isNotEmpty())
+            ResponseEntity.badRequest().body(buildNewContactPage(result))
+        else
+            redirectToContactListPage()
+    }
+}
+
+fun buildNewContactPage(result: ContactUpsertResult): String =
+    buildContactsAppHTML {
+        form(action = "/contacts/new", method = FormMethod.post) {
+            fieldSet {
+                legend { +"Contact Values" }
+                p {
+                    label {
+                        htmlFor = "email"
+                        +"Email"
+                    }
+                    input(type = InputType.email, name = "email") {
+                        id = "email"
+                        placeholder = "Email"
+                        value = result.request.email
+                    }
+                    span(classes = "error") {
+                        +(result.errors[ContactUpsertResult.Fields.Email] ?: "")
+                    }
+                }
+                p {
+                    label {
+                        htmlFor = "first"
+                        +"First Name"
+                    }
+                    input(type = InputType.text, name = "first") {
+                        id = "first"
+                        placeholder = "First Name"
+                        value = result.request.first
+                    }
+                    span(classes = "error") {
+                        +(result.errors[ContactUpsertResult.Fields.First] ?: "")
+                    }
+                }
+                p {
+                    label {
+                        htmlFor = "last"
+                        +"Last Name"
+                    }
+                    input(type = InputType.text, name = "last") {
+                        id = "last"
+                        placeholder = "Last Name"
+                        value = result.request.last
+                    }
+                    span(classes = "error") {
+                        +(result.errors[ContactUpsertResult.Fields.Last] ?: "")
+                    }
+                }
+                p {
+                    label {
+                        htmlFor = "phone"
+                        +"Phone"
+                    }
+                    input(type = InputType.text, name = "phone") {
+                        id = "phone"
+                        placeholder = "Phone"
+                        value = result.request.phone
+                    }
+                    span(classes = "error") {
+                        +(result.errors[ContactUpsertResult.Fields.Phone] ?: "")
+                    }
+                }
+
+                button { +"Save" }
+            }
+        }
+
+        p {
+            a(href = "/contacts") { +"Back" }
         }
     }
 

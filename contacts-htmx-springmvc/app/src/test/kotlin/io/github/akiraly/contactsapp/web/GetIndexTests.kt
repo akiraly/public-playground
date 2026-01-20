@@ -8,7 +8,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(GetIndex::class)
+@WebMvcTest(GetIndexPage::class)
 class GetIndexTests {
 
     @Autowired
